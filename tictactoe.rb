@@ -35,20 +35,6 @@ def print_grid(squares)
   puts
 end
 
-def who_starts(player_pick)
-  case player_pick.upcase
-  when "X"
-      puts "Alright, you picked #{player_pick.upcase}, so that PC is starting..."
-      return "PC"
-  when "O"
-      puts "Alright, you picked #{player_pick.upcase}, so that YOU are starting..."
-      return "YOU"
-  else
-      puts "Fuck you man! You typed in #{player_pick}. So that PC is starting..."
-      return "PC"
-  end
-end
-
 def get_available_squares(squares)
   available_squares = Hash.new
   squares.each { |key, value|
@@ -59,13 +45,11 @@ def get_available_squares(squares)
   return available_squares
 end
 
-def pc_random_mark(squares)
-  available_squares = get_available_squares(squares)
-  squares[available_squares.keys.sample] = "O"
+def cleanup_grid(squares)
+  squares.each{ |key, value|
+    squares[key] = " "
+  }
   return squares
-end
-  
-def player_mark(squares)
 end
 
 def get_attribute(prompt="Pick 'o' or 'x' as your attribute. 'o' starts :) :", attributes = ["O","X"])
@@ -90,22 +74,40 @@ player_name = gets.chomp
 puts("Hello #{player_name.capitalize}! During game, in each round you will be asked to mark square from {A1 to C3},")
 puts("e.g. if you pick #{demo_square} as '#{demo_attribute}' the board will looks like this:")
 print_grid(demo_player.turn(square = demo_square, squares = squares))
+squares = cleanup_grid(squares)
 puts(">>> Now, It's time to play!")
 player_attribute = get_attribute()
 attributes.delete(player_attribute)
 User = Player.new(name = player_name.capitalize, attribute = player_attribute)
 Computer = Player.new(name = "Computer", attribute = attributes.first)
-print("You chose #{player_attribute}, so that ")
-if User.get_attribute == "O"
-  print("You are ")
-else
-  print("Computer is ")
+Users = [User, Computer]
+current_player = ''
+Users.each{ |item|
+  if item.get_attribute == "O"
+    puts("#{item.get_name} begin a game")
+    current_player = item
+  end
+}
+iterations = 0
+while true
+  iterations+=1
+    if current_player.get_name == Computer.get_name
+      squares = Computer.random_turn(squares)
+      puts("Computer turn:")
+      print_grid(squares)
+      current_player = User
+    else
+      squares = User.turn(squares)
+      puts("Your turn:")
+      print_grid(squares)
+      current_player = Computer
+    end
+  if iterations >= 9
+    puts("It is DRAW!")
+    break
+  end
+  #check_for_winner
 end
-puts("starting a game.")
-
-# current_player = who_starts(player_pick)
-# player = Player.new('Player', 'X')
-# puts("#{player.info}")
   
   
   
