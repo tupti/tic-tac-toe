@@ -13,16 +13,19 @@ squares = {
 }
 attributes = ["X", "O"]
 
-win_combinations = [
-  [squares["a1"], squares["a2"], squares["a3"]],
-  [squares["a1"], squares["b2"], squares["c3"]],
-  [squares["a1"], squares["b1"], squares["c1"]],
-  [squares["b1"], squares["b2"], squares["b3"]],
-  [squares["c1"], squares["c2"], squares["c3"]],
-  [squares["c1"], squares["b2"], squares["a3"]],
-  [squares["a2"], squares["b2"], squares["c2"]],
-  [squares["a3"], squares["b3"], squares["c3"]]
-]
+def fill_win_combinations(squares)
+  win_combinations = [
+    [squares["a1"], squares["a2"], squares["a3"]],
+    [squares["a1"], squares["b2"], squares["c3"]],
+    [squares["a1"], squares["b1"], squares["c1"]],
+    [squares["b1"], squares["b2"], squares["b3"]],
+    [squares["c1"], squares["c2"], squares["c3"]],
+    [squares["c1"], squares["b2"], squares["a3"]],
+    [squares["a2"], squares["b2"], squares["c2"]],
+    [squares["a3"], squares["b3"], squares["c3"]]
+  ]
+  return win_combinations
+end
 
 def print_grid(squares)
   puts
@@ -61,6 +64,28 @@ def get_attribute(prompt="Pick 'o' or 'x' as your attribute. 'o' starts :) :", a
   end
   return attribute_pick.upcase
 end
+
+def check_winner(squares, users)
+  win_combinations = fill_win_combinations(squares)
+  win_combinations.each do |element|
+      if element.join('') == "XXX"
+          print_winner("X", users)
+      elsif element.join('') == "OOO"
+          print_winner("O", users)
+      end 
+  end
+end
+
+def print_winner(winning_attribute, users)
+  users.each{ |item|
+    if item.get_attribute == winning_attribute
+        puts("#{item.get_name} is a Winner!")
+        exit
+    end
+  }
+end
+
+#end
 #MAIN
 ### demo player
 demo_attribute = attributes.sample
@@ -102,11 +127,11 @@ while true
       print_grid(squares)
       current_player = Computer
     end
-  if iterations >= 9
-    puts("It is DRAW!")
-    break
-  end
-  #check_for_winner
+    check_winner(squares, Users)
+    if iterations >= 9
+      puts("It is DRAW!")
+      break
+    end
 end
   
   
